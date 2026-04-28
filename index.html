@@ -1,17 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="SafeHaven - A safe space for students dealing with cyberbullying" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <title>SafeHaven - You can talk to us</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeHaven - You can talk to us</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FAFAFA; --surface: #fff; --primary: #1A1F2E; --secondary: #5A6478;
+      --accent: #2D5A7B; --accent-light: #4A7C6F; --error: #B85450;
+      --font-display: 'Fraunces', Georgia, serif; --font-body: 'DM Sans', system-ui, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--primary); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    
+    /* Nav */
+    nav { position: fixed; top: 0; left: 0; right: 0; height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; background: rgba(250,250,250,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.06); z-index: 100; }
+    .logo { font-family: var(--font-display); font-size: 24px; font-weight: 600; color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: var(--secondary); }
+    .nav-links a:hover { color: var(--accent); }
+    
+    /* Hero */
+    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 24px 96px; position: relative; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45,90,123,0.04) 0%, transparent 50%); pointer-events: none; }
+    .hero h1 { font-family: var(--font-display); font-size: clamp(36px, 6vw, 56px); font-weight: 600; margin-bottom: 24px; }
+    .hero p { font-size: 18px; color: var(--secondary); max-width: 540px; margin: 0 auto 40px; }
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn { padding: 16px 32px; font-size: 15px; font-weight: 600; border-radius: 12px; transition: all 0.3s; }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: #234968; }
+    .btn-secondary { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+    .btn-secondary:hover { background: rgba(45,90,123,0.06); }
+    
+    /* Sections */
+    section { padding: 96px 24px; }
+    .section-title { font-family: var(--font-display); font-size: clamp(28px, 4vw, 40px); font-weight: 600; text-align: center; margin-bottom: 16px; }
+    .section-subtitle { font-size: 16px; color: var(--secondary); text-align: center; margin-bottom: 64px; }
+    
+    /* Card */
+    .card { background: var(--surface); border-radius: 16px; box-shadow: 0 2px 8px rgba(26,31,46,0.04), 0 8px 24px rgba(26,31,46,0.06); }
+    
+    /* Chat Section */
+    #chat { background: var(--bg); }
+    .chat-container { max-width: 640px; margin: 0 auto; }
+    .chat-header { padding: 24px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .chat-header h3 { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+    .chat-header p { font-size: 14px; color: var(--secondary); }
+    .chat-msgs { height: 320px; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .chat-bubble { max-width: 80%; padding: 14px 18px; border-radius: 16px; font-size: 15px; animation: msgIn 0.3s; }
+    .chat-bubble.received { background: #f0f2f5; align-self: flex-start; }
+    .chat-bubble.sent { background: var(--accent); color: white; align-self: flex-end; }
+    @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } }
+    .chat-input { padding: 24px; border-top: 1px solid #eee; }
+    .chat-input textarea { width: 100%; padding: 14px; border: 1.5px solid #e5e7eb; border-radius: 12px; resize: none; min-height: 80px; font-family: inherit; font-size: 15px; }
+    .chat-input textarea:focus { outline: none; border-color: var(--accent); }
+    .quick-prompts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .quick-prompt { padding: 8px 14px; font-size: 13px; color: var(--accent); background: rgba(45,90,123,0.06); border-radius: 20px; }
+    .quick-prompt:hover { background: rgba(45,90,123,0.12); }
+    .chat-send { margin-top: 12px; padding: 12px 24px; font-size: 14px; font-weight: 600; color: white; background: var(--accent); border-radius: 12px; }
+    .chat-send:hover { background: #234968; }
+    .quick-actions { display: flex; gap: 8px; }
+    .quick-actions a, .quick-actions button { padding: 8px; color: var(--secondary); }
+    .quick-actions a:hover, .quick-actions button:hover { color: var(--error); }
+    
+    /* Tools */
+    #tools { background: var(--surface); }
+    .tools-grid { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+    .tool-card { overflow: hidden; }
+    .tool-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .tool-header:hover { background: rgba(0,0,0,0.02); }
+    .tool-title { font-weight: 600; }
+    .tool-icon { transition: transform 0.3s; }
+    .tool-icon.open { transform: rotate(180deg); }
+    .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s, padding 0.3s; }
+    .tool-content.open { max-height: 400px; padding: 0 24px 20px; }
+    .tool-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; color: var(--secondary); }
+    .tool-check { width: 20px; height: 20px; flex-shrink: 0; border: 2px solid #ddd; border-radius: 4px; }
+    
+    /* Resources */
+    .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto; }
+    .resource-card { padding: 28px; }
+    .resource-icon { width: 44px; height: 44px; background: rgba(45,90,123,0.08); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 16px; }
+    .resource-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+    .resource-text { font-size: 14px; color: var(--secondary); }
+    
+    /* Footer */
+    footer { padding: 48px 24px; background: var(--surface); border-top: 1px solid #eee; text-align: center; }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 20px; }
+    .footer-links a { font-size: 14px; color: var(--secondary); }
+    .footer-copy { font-size: 13px; color: var(--secondary); margin-bottom: 16px; }
+    .quick-exit { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; color: var(--error); font-size: 13px; border-radius: 8px; }
+    .quick-exit:hover { background: rgba(184,84,80,0.1); }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 120px 20px 64px; }
+      .hero-btns { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav>
+    <a href="#home" class="logo">SafeHaven</a>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#chat">Chat</a>
+      <a href="#tools">Tools</a>
+      <a href="#resources">Resources</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="home" class="hero">
+    <div>
+      <h1>You can talk to us.</h1>
+      <p>If something bad is happening online, you dont have to deal with it by yourself. We got you.</p>
+      <div class="hero-btns">
+        <a href="#chat" class="btn btn-primary">Lets talk</a>
+        <a href="#tools" class="btn btn-secondary">See tools</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chat -->
+  <section id="chat">
+    <div class="section-title">Chat with us</div>
+    <p class="section-subtitle">No pressure. Just tell me whats up.</p>
+    <div class="card chat-container">
+      <div class="chat-header">
+        <div>
+          <h3>Support Chat</h3>
+          <p>Just between us</p>
+        </div>
+        <div class="quick-actions">
+          <button onclick="resetChat()" title="Reset">↺</button>
+          <a href="https://google.com" target="_blank" title="Quick Exit">✕</a>
+        </div>
+      </div>
+      <div class="chat-msgs" id="chatMsgs">
+        <div class="chat-bubble received">hey, its Julian. i built this chat bot thing so like... its not gonna be perfect lol but im here and listening. whats going on?</div>
+      </div>
+      <div class="chat-input">
+        <textarea id="chatInput" placeholder="Type something..."></textarea>
+        <div class="quick-prompts">
+          <button class="quick-prompt" onclick="setPrompt(this)">someone said something mean</button>
+          <button class="quick-prompt" onclick="setPrompt(this)">i got nasty messages</button>
+          <button class="quick-prompt" onclick="setPrompt(this)">i dont know what to do</button>
+          <button class="quick-prompt" onclick="setPrompt(this)">i need to report someone</button>
+        </div>
+        <button class="chat-send" onclick="sendMsg()">Send</button>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--secondary);margin-top:16px;">your stuff stays between us. nothing gets shared.</p>
+  </section>
+
+  <!-- Tools -->
+  <section id="tools">
+    <div class="section-title">Helpful stuff</div>
+    <p class="section-subtitle">things you can do if you need them</p>
+    <div class="tools-grid">
+      <!-- Tool 1 -->
+      <div class="card tool-card">
+        <div class="tool-header" onclick="toggleTool(this)">
+          <span class="tool-title">What to do right now</span>
+          <span class="tool-icon">▼</span>
+        </div>
+        <div class="tool-content">
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>take a breath. you are gonna be okay.</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>screenshot everything as proof</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>block the person if you can</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>tell someone you trust what happened</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>save those screenshots somewhere safe</div>
+        </div>
+      </div>
+      <!-- Tool 2 -->
+      <div class="card tool-card">
+        <div class="tool-header" onclick="toggleTool(this)">
+          <span class="tool-title">How to block or report someone</span>
+          <span class="tool-icon">▼</span>
+        </div>
+        <div class="tool-content">
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>open their message or profile</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>tap the options menu (three dots)</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>click block or report</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>follow what the app says</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>save screenshots first just in case</div>
+        </div>
+      </div>
+      <!-- Tool 3 -->
+      <div class="card tool-card">
+        <div class="tool-header" onclick="toggleTool(this)">
+          <span class="tool-title">Saving proof (screenshots)</span>
+          <span class="tool-icon">▼</span>
+        </div>
+        <div class="tool-content">
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>screenshot the mean messages</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>make sure username and date are visible</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>save to a private folder or cloud</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>dont edit or crop them</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>only show to adults you trust</div>
+        </div>
+      </div>
+      <!-- Tool 4 -->
+      <div class="card tool-card">
+        <div class="tool-header" onclick="toggleTool(this)">
+          <span class="tool-title">What to say (and what not to)</span>
+          <span class="tool-icon">▼</span>
+        </div>
+        <div class="tool-content">
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>DO: stay calm and factual</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>DO: save proof first</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>DONT: blow up at them</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>DONT: fight back the same way</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>DONT: post it publicly</div>
+        </div>
+      </div>
+      <!-- Tool 5 -->
+      <div class="card tool-card">
+        <div class="tool-header" onclick="toggleTool(this)">
+          <span class="tool-title">When to tell an adult</span>
+          <span class="tool-icon">▼</span>
+        </div>
+        <div class="tool-content">
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>if you feel unsafe</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>if it keeps happening</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>if someone else is getting hit too</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>if its messing with your head</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>you dont have to handle this alone</div>
+        </div>
+      </div>
+      <!-- Tool 6 -->
+      <div class="card tool-card">
+        <div class="tool-header" onclick="toggleTool(this)">
+          <span class="tool-title">Protecting your accounts</span>
+          <span class="tool-icon">▼</span>
+        </div>
+        <div class="tool-content">
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>make your profiles private</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>turn on two-factor authentication</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>use different passwords</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>check your followers and friends</div>
+          <div class="tool-item"><div class="tool-check" onclick="check(this)"></div>dont post personal stuff publicly</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resources -->
+  <section id="resources">
+    <div class="section-title">Stuff to know</div>
+    <p class="section-subtitle">just some info in case its helpful</p>
+    <div class="resources-grid">
+      <div class="card resource-card">
+        <div class="resource-icon">ℹ</div>
+        <h3 class="resource-title">What is cyberbullying</h3>
+        <p class="resource-text">basically when someone is being a jerk online - threats, spreading rumors, humiliation. can happen on social media, games, texts.</p>
+      </div>
+      <div class="card resource-card">
+        <div class="resource-icon">♥</div>
+        <h3 class="resource-title">How it affects people</h3>
+        <p class="resource-text">it messes with your head. anxiety, feeling bad about yourself, depressed. its not your fault and you didnt deserve it.</p>
+      </div>
+      <div class="card resource-card">
+        <div class="resource-icon">👥</div>
+        <h3 class="resource-title">How to get help</h3>
+        <p class="resource-text">talk to someone. us, a teacher, your parents, counselor. just dont bottle it up.</p>
+      </div>
+      <div class="card resource-card">
+        <div class="resource-icon">📞</div>
+        <h3 class="resource-title">Who to reach out to</h3>
+        <p class="resource-text">school counselor is a good start. parents if you can. also the platform itself has report buttons.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </div>
+    <p class="footer-copy">SafeHaven 2026</p>
+    <p style="font-size:12px;color:var(--secondary);margin-bottom:12px;">your stuff stays between us. nothing gets shared.</p>
+    <a href="https://google.com" target="_blank" class="quick-exit">
+      <span>✕</span> Quick Exit
+    </a>
+  </footer>
+
+  <script>
+    // Chat functions
+    function setPrompt(el) { document.getElementById('chatInput').value = el.textContent; }
+    function sendMsg() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const msgs = document.getElementById('chatMsgs');
+      msgs.innerHTML += '<div class="chat-bubble sent">' + text + '</div>';
+      input.value = '';
+      msgs.scrollTop = msgs.scrollHeight;
+      setTimeout(() => {
+        msgs.innerHTML += '<div class="chat-bubble received">yeah i hear you. that sounds rough. im not gonna pretend i have all the answers but we can figure it out together ok?</div>';
+        msgs.scrollTop = msgs.scrollHeight;
+      }, 1000);
+    }
+    document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } });
+    function resetChat() { document.getElementById('chatMsgs').innerHTML = '<div class="chat-bubble received">hey, its Julian. i built this chat bot thing so like... its not gonna be perfect lol but im here and listening. whats going on?</div>'; }
+    
+    // Tool functions
+    function toggleTool(header) {
+      const content = header.nextElementSibling;
+      const icon = header.querySelector('.tool-icon');
+      content.classList.toggle('open');
+      icon.classList.toggle('open');
+    }
+    function check(el) { el.style.background = el.style.background ? '' : 'var(--accent)'; el.style.borderColor = el.style.borderColor ? '' : 'var(--accent)'; }
+  </script>
+</body>
 </html>
