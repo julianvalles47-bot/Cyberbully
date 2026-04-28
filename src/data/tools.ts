@@ -1,0 +1,14 @@
+export interface ToolItem { text: string; checked?: boolean; }
+export interface Tool { id: string; title: string; items: ToolItem[]; icon?: string; }
+
+export const tools: Tool[] = [
+  { id: 'immediate', title: 'What to do right now', items: [{ text: 'take a breath. you are gonna be okay.', checked: false }, { text: 'screenshot everything as proof', checked: false }, { text: 'block the person if you can', checked: false }, { text: 'tell someone you trust what happened', checked: false }, { text: 'save those screenshots somewhere safe', checked: false }], icon: 'clock' },
+  { id: 'block-report', title: 'How to block or report someone', items: [{ text: 'open their message or profile', checked: false }, { text: 'tap the options menu (three dots)', checked: false }, { text: 'click block or report', checked: false }, { text: 'follow what the app says', checked: false }, { text: 'save screenshots first just in case', checked: false }], icon: 'shield' },
+  { id: 'evidence', title: 'Saving proof (screenshots)', items: [{ text: 'screenshot the mean messages', checked: false }, { text: 'make sure username and date are visible', checked: false }, { text: 'save to a private folder or cloud', checked: false }, { text: 'dont edit or crop them', checked: false }, { text: 'only show to adults you trust', checked: false }], icon: 'camera' },
+  { id: 'response-guide', title: 'What to say (and what not to)', items: [{ text: 'DO: stay calm and factual', checked: false }, { text: 'DO: save proof first', checked: false }, { text: 'DONT: blow up at them', checked: false }, { text: 'DONT: fight back the same way', checked: false }, { text: 'DONT: post it publicly', checked: false }], icon: 'message' },
+  { id: 'trusted-adults', title: 'When to tell an adult', items: [{ text: 'if you feel unsafe', checked: false }, { text: 'if it keeps happening', checked: false }, { text: 'if someone else is getting hit too', checked: false }, { text: 'if its messing with your head', checked: false }, { text: 'you dont have to handle this alone', checked: false }], icon: 'user' },
+  { id: 'privacy', title: 'Protecting your accounts', items: [{ text: 'make your profiles private', checked: false }, { text: 'turn on two-factor authentication', checked: false }, { text: 'use different passwords', checked: false }, { text: 'check your followers and friends', checked: false }, { text: 'dont post personal stuff publicly', checked: false }], icon: 'lock' },
+];
+
+export const quickExitUrl = 'https://www.google.com';
+export const sampleMessages = ["im being bullied online", "someone keeps sending me mean stuff", "i need help reporting someone", "can i talk to someone?", "i want to stay anonymous"];
