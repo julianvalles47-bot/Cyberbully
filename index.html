@@ -148,7 +148,7 @@
         </div>
       </div>
       <div class="chat-msgs" id="chatMsgs">
-        <div class="chat-bubble received">talk to me pls</div>
+        <div class="chat-bubble received">talk to me pls (mock up btw)</div>
       </div>
       <div class="chat-input">
         <textarea id="chatInput" placeholder="Type something..."></textarea>
@@ -264,7 +264,7 @@
       <div class="card resource-card">
         <div class="resource-icon">ℹ</div>
         <h3 class="resource-title">What is cyberbullying</h3>
-        <p class="resource-text">basically when someone is being a jerk online - threats, spreading rumors, humiliation. can happen on social media, games, texts.</p>
+        <p class="resource-text">basically when someone is being a jerk online threats, spreading rumors, humiliation. can happen on social media, games, texts.</p>
       </div>
       <div class="card resource-card">
         <div class="resource-icon">♥</div>
@@ -310,12 +310,12 @@
       input.value = '';
       msgs.scrollTop = msgs.scrollHeight;
       setTimeout(() => {
-        msgs.innerHTML += '<div class="chat-bubble received">yeah i hear you. that sounds rough. im not gonna pretend i have all the answers but we can figure it out together ok? mestizo walkers JIRA safehaven ai bot is broken</div>';
+        msgs.innerHTML += '<div class="chat-bubble received">yeah i hear you. that sounds rough. im not gonna pretend i have all the answers but we can figure it out together ok?</div>';
         msgs.scrollTop = msgs.scrollHeight;
       }, 1000);
     }
     document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } });
-    function resetChat() { document.getElementById('chatMsgs').innerHTML = '<div class="chat-bubble received">hey, its Julian. i built this chat bot thing so like... its not gonna be perfect lol but im here and listening. whats going on?</div>'; }
+    function resetChat() { document.getElementById('chatMsgs').innerHTML = '<div class="chat-bubble received">This doesnt work its a mock up</div>'; }
     
     // Tool functions
     function toggleTool(header) {
